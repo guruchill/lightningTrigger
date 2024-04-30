@@ -2,14 +2,17 @@
 #include "InputDebounce.h"
 #include "BLECamera.h"
 
-#define DEBOUNCE_DELAY 20 
-#define SHUTTER_BUTTON_PIN 11
-#define FOCUS_BUTTON_PIN 12
-#define SELECT_SWITCH_PIN 13
+#define DEBOUNCE_DELAY 20
+#define SHUTTER_BUTTON_PIN 7
+#define FOCUS_BUTTON_PIN 15
+#define SELECT_SWITCH_PIN 11
+#define LIGHTNING_TRIGGER_PIN 16
+
 
 static InputDebounce shutterButton;
 static InputDebounce focusButton;
 static InputDebounce selectSwitch;
+static InputDebounce LightningTrigger;
 
 typedef void (*button_callback)(void);
 
@@ -39,6 +42,10 @@ private:
 
     static void switch_on(uint8_t pinIn);
     static void switch_off(uint8_t pinIn);
+
+    static void lightning_on(uint8_t pinIn);
+    static void lightning_off(uint8_t pinIn);
+    
 
 
     static inline button_callback _resetCallback = nullptr;

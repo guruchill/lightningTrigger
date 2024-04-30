@@ -2,11 +2,12 @@
 
 RemoteStatus::RemoteStatus(void)
 {
-    FastLED.addLeds<NEOPIXEL, PIN_NEOPIXEL>(leds, 1);
+    /*FastLED.addLeds<NEOPIXEL, PIN_NEOPIXEL>(leds, 1);
     speed = 100;
     set(NONE);
 
     xTaskCreate(&update_wrapper, "update", 256, NULL, TASK_PRIO_LOW, &statusLoopHandle);
+    */
 }
 
 void RemoteStatus::set(Status s)
