@@ -5,6 +5,8 @@
 #include <array>
 #include <algorithm>
 #include "RemoteStatus.h"
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
 
 class BLEHandler
 {
@@ -21,5 +23,7 @@ public:
     static void _connection_secured_callback(uint16_t conn_handle);
 
     static inline bool _attempt_pairing;
+    Adafruit_SSD1306* display;
+
 
 };

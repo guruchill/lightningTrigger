@@ -7,6 +7,9 @@
 #include <array>
 #include <algorithm>
 #include "RemoteStatus.h"
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+
 
 constexpr uint16_t SHUTTER_RELEASED = 0x0601;
 constexpr uint16_t PRESS_TO_FOCUS = 0x0701;
@@ -37,7 +40,7 @@ class BLECamera : public BLEClientService
 public:
     
     BLECamera(void);
-
+    Adafruit_SSD1306* display;
     virtual bool begin(void);
     virtual bool discover(uint16_t conn_handle);
 
