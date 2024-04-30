@@ -36,6 +36,17 @@ void Input::process(unsigned long time)
     focusButton.process(time);
     selectSwitch.process(time);
     LightningTrigger.process(time);
+
+    //Get the analog input for the lightning sensor
+    int sensorValue = analogRead(ANALOG_SENSOR);
+    //Serial.println(sensorValue);
+    if ( sensorValue > TriggerLevel)
+    {
+        Serial.println("Lightning Detected");
+        lightning_on(0);
+    }
+    
+
 }
 
 void Input::pressTrigger(uint8_t pinIn)

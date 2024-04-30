@@ -7,6 +7,9 @@
 #define FOCUS_BUTTON_PIN 15
 #define SELECT_SWITCH_PIN 11
 #define LIGHTNING_TRIGGER_PIN 16
+#define ANALOG_SENSOR PIN_A5
+
+#define TriggerLevel 800
 
 
 static InputDebounce shutterButton;
