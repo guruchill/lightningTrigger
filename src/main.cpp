@@ -6,6 +6,10 @@
 #include "InputHandler.h"
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+
+
+
+
 #define WIRE Wire
 
 BLECamera camera;
@@ -31,27 +35,26 @@ void setup()
 
     Input::registerResetCallback(resetTest);
 
-// Debug nation bro
-#if CFG_DEBUG
+
+
     Serial.begin(115200);
     rs->set(Status::WAIT_FOR_SERIAL);
     while (!Serial)
         delay(10);
-#endif
+
 
     //Setup the SSD1306
-    display = Adafruit_SSD1306(128, 32, &WIRE);
-    display.begin(SSD1306_SWITCHCAPVCC, 0x78); 
-    handler.display = &display;
-    camera.display = &display;
-    display.clearDisplay();
-    display.display();
-    display.setTextSize(1);
-    display.setTextColor(SSD1306_WHITE);
-    display.setCursor(0,0);
-    display.println("Camera Remote");
-    display.setCursor(0,0);
-    display.display(); // actually display all of the above
+    Input::display = Adafruit_SSD1306(128, 32, &WIRE);
+    Input::display.begin(SSD1306_SWITCHCAPVCC, 0x3c); 
+
+    
+    Input::display.clearDisplay();
+    Input::display.display();
+    Input::display.setTextSize(1);
+    Input::display.setTextColor(SSD1306_WHITE);
+    Input::BannerText = "CameraRemote";
+    Input::drawDisplay();
+
 
     // Initialze BLE
     if (!handler.InitBLE(&camera))

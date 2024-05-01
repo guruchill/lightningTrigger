@@ -1,5 +1,6 @@
 #include "BLECamera.h"
 #include "bluefruit.h"
+#include "InputHandler.h"
 
 BLECamera::BLECamera(void) : BLEClientService("8000FF00-FF00-FFFF-FFFF-FFFFFFFFFFFF"), _remoteCommand(0xFF01), _remoteNotify(0xFF02)
 {
@@ -45,7 +46,7 @@ bool BLECamera::discover(uint16_t conn_handle)
 void BLECamera::_handle_camera_notification(uint8_t *data, uint16_t len)
 {
 
-#if CFG_DEBUG
+
     Serial.println("Camera data: ");
     Serial.print("LEN: ");
     Serial.print(len);
@@ -58,7 +59,7 @@ void BLECamera::_handle_camera_notification(uint8_t *data, uint16_t len)
     }
     Serial.write("\0\n");
     Serial.flush();
-#endif
+
 
     if (len == 3)
     {

@@ -1,3 +1,22 @@
+# Sony Alpha 7 Lightning Trigger
+## Based on Freemote by Coral
+
+## To Do
+* Smooth the input level display
+* Allow for inverted mode (i.e. light break)
+* Persist sensitivity setting
+* Build sound triggering
+* Reduce latency (this may be a Bluetooth issue)
+* Allow use of 52832 and 52840 
+* Change pairing name from Freemote
+* Battery satatus indication
+* Fix Disconnect / Reconnect lockup
+
+
+
+
+
+
 # Freemote - Sony Alpha BLE Remote implemented on the NRF52840
 
 ### [Watch the build on Youtube](https://www.youtube.com/watch?v=G_nyD2bTs7A)
@@ -100,3 +119,5 @@ The shutter button commands must go through the sequence of "Half down -> Fully 
 
 - [Greg Leeds](https://gregleeds.com/reverse-engineering-sony-camera-bluetooth/)
 - [tao-j](https://github.com/tao-j) for further digging, reproing and discovering
+
+

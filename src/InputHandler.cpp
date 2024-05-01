@@ -1,19 +1,34 @@
 #include "InputHandler.h"
+#include <Adafruit_LittleFS.h>
+#include <InternalFileSystem.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+
+#define TriggerLevel 800
+#define ThresholdSkip 50 
+#define MaxThreshold 1000
+
+
+int Input::triggerThreshold = 0;
+Adafruit_SSD1306 Input::display;
+String Input::BannerText = "CameraRemote";
 
 bool Input::Init(BLECamera *newcam)
 {
     _camera_ref = newcam;
     canReset = true;
 
-    shutterButton.registerCallbacks(pressTrigger, releaseTrigger, NULL, resetCheck);
-    focusButton.registerCallbacks(pressFocus, releaseFocus, NULL, NULL);
+    thresholdUpButton.registerCallbacks(upButton, releaseUpButton, NULL, resetCheck);
+    thresholdDownButton.registerCallbacks(downButton, releaseDownButton, NULL, NULL);
     selectSwitch.registerCallbacks(switch_on, switch_off, NULL, NULL);
     LightningTrigger.registerCallbacks (lightning_on, lightning_off, NULL, NULL);
 
-    shutterButton.setup(SHUTTER_BUTTON_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
-    focusButton.setup(FOCUS_BUTTON_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
+    thresholdUpButton.setup(UP_BUTTON_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
+    thresholdDownButton.setup(DOWN_BUTTON_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
     selectSwitch.setup(SELECT_SWITCH_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
     LightningTrigger.setup(LIGHTNING_TRIGGER_PIN, DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_DOWN_RES, 1, InputDebounce::ST_NORMALLY_OPEN);
+
+    triggerThreshold = TriggerLevel;
 
     Input::readStartup();
 }
@@ -32,42 +47,54 @@ void Input::readStartup(void)
 
 void Input::process(unsigned long time)
 {
-    shutterButton.process(time);
-    focusButton.process(time);
+    thresholdUpButton.process(time);
+    thresholdDownButton.process(time);
     selectSwitch.process(time);
     LightningTrigger.process(time);
 
     //Get the analog input for the lightning sensor
     int sensorValue = analogRead(ANALOG_SENSOR);
-    //Serial.println(sensorValue);
-    if ( sensorValue > TriggerLevel)
+
+    if ( sensorValue > triggerThreshold )
     {
         Serial.println("Lightning Detected");
         lightning_on(0);
     }
+
+    drawDisplay(sensorValue);
     
 
 }
 
-void Input::pressTrigger(uint8_t pinIn)
+void Input::upButton(uint8_t pinIn)
 {
-    Serial.println("Tringger On");
-    _camera_ref->pressTrigger();
+    Serial.println("Threshold Up");
+    triggerThreshold = triggerThreshold + ThresholdSkip;
+    if (triggerThreshold > MaxThreshold)
+    {
+        triggerThreshold = MaxThreshold;
+    }
+  
 }
 
-void Input::releaseTrigger(uint8_t pinIn)
+void Input::releaseUpButton(uint8_t pinIn)
 {
-    Serial.println("Trigger Off");
-    _camera_ref->releaseTrigger();
+
+
 }
 
-void Input::pressFocus(uint8_t pinIn)
+void Input::downButton(uint8_t pinIn)
 {
-    Serial.println("Focus On");
-    _camera_ref->focus(true);
+    Serial.println("Threshold Down");
+    triggerThreshold = triggerThreshold - ThresholdSkip;
+    if (triggerThreshold < 0 )
+    {
+        triggerThreshold = 0;
+    }
+   drawDisplay();
 }
 
-void Input::releaseFocus(uint8_t pinIn)
+void Input::releaseDownButton(uint8_t pinIn)
 {
     Serial.println("Focus Off");
     _camera_ref->focus(false);
@@ -120,4 +147,16 @@ void Input::switch_off(uint8_t pinIn)
     Serial.println("Switch Off");
     digitalWrite(3, LOW);
     _camera_ref->setMode(AUTO_FOCUS);
+}
+
+void Input::drawDisplay(int sensorLevel)
+{
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(0,0);
+    display.println(BannerText);
+    display.printf("Sensitivity %d\n", triggerThreshold);
+    display.printf("Current Level: %d\n", sensorLevel);
+    display.display();
 }

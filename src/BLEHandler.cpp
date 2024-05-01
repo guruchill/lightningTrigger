@@ -1,4 +1,5 @@
 #include "BLEHandler.h"
+#include "InputHandler.h"
 
 RemoteStatus *rs = rs->access();
 
@@ -21,18 +22,16 @@ bool BLEHandler::InitBLE(BLECamera *newcam)
 
     VERIFY(_camera_ref->begin());
 
-    Bluefruit.autoConnLed(false);
-    #if CFG_DEBUG
     Bluefruit.autoConnLed(true);
-    //Bluefruit.setConnLedInterval(250);
-    #endif
+   
 
     Bluefruit.Scanner.restartOnDisconnect(true);
     Bluefruit.Scanner.setInterval(160, 80);
     Bluefruit.Scanner.useActiveScan(false);
     Bluefruit.Scanner.start(0);
 
-    Serial.println("Started scanning");
+    Input::BannerText = "Started scanning";
+    Input::drawDisplay();
 
     rs->set(Status::CONNECTING);
 
@@ -73,6 +72,8 @@ void BLEHandler::_connect_callback(uint16_t conn_handle)
     BLEConnection *conn = Bluefruit.Connection(conn_handle);
 
     Serial.println("Connected to device.");
+    Input::BannerText = "Connected to Camera";
+    Input::drawDisplay();
     if (_attempt_pairing == true)
     {
         conn->requestPairing();
@@ -85,6 +86,8 @@ void BLEHandler::_disconnect_callback(uint16_t conn_handle, uint8_t reason)
     (void)reason;
 
     Serial.print("Disconnected, reason = 0x");
+    Input::BannerText = "Disconnected";
+    Input::drawDisplay();
     Serial.println(reason, HEX);
     Bluefruit._setConnLed(true);
     rs->set(Status::CONNECTION_LOST);
