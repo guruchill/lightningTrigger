@@ -3,6 +3,7 @@
 
 ## To Do
 * Smooth the input level display
+* Do not attempt to communicate if the camera is not connected. 
 * Allow for inverted mode (i.e. light break)
 * Persist sensitivity setting
 * Build sound triggering

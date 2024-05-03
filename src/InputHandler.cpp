@@ -53,12 +53,24 @@ void Input::process(unsigned long time)
     LightningTrigger.process(time);
 
     //Get the analog input for the lightning sensor
+    unsigned long  preTriggerTime = millis();
     int sensorValue = analogRead(ANALOG_SENSOR);
 
     if ( sensorValue > triggerThreshold )
     {
+       
         Serial.println("Lightning Detected");
+        unsigned long  preShutterTime = millis();
         lightning_on(0);
+        unsigned long  postShutterTime = millis();
+        Serial.printf("Time before ADC check %d\n", preTriggerTime);
+        Serial.printf("Time before shutter fire %d\n", preShutterTime);
+        Serial.printf("Time after shutter fire %d\n", postShutterTime);
+        Serial.printf("ADC time %d\n", preShutterTime - preTriggerTime);
+        Serial.printf("Time to fire %d\n", postShutterTime - preShutterTime);
+        
+        Serial.println("");
+        
     }
 
     drawDisplay(sensorValue);
@@ -109,8 +121,11 @@ void Input::lightning_off(uint8_t pinIn)
 void Input::lightning_on(uint8_t pinIn)
 {
     Serial.println("Lightning On");
+    unsigned long  preTriggerTime = millis();
     _camera_ref->focus(true);
     _camera_ref->pressTrigger();
+    unsigned long  postTriggerTime = millis();
+    Serial.printf("*** Time to trigger %d\n", postTriggerTime - preTriggerTime); 
     _camera_ref->releaseTrigger();
     _camera_ref->focus(false);
 }
@@ -157,6 +172,13 @@ void Input::drawDisplay(int sensorLevel)
     display.setCursor(0,0);
     display.println(BannerText);
     display.printf("Sensitivity %d\n", triggerThreshold);
-    display.printf("Current Level: %d\n", sensorLevel);
+    
+    int currentLevel = (int)((float)sensorLevel/1000*128);
+    int triggerLevel = (int)((float)triggerThreshold/1000*128);
+    //display.printf("Sensor Level %d\n", currentLevel);
+    display.fillRect(0,30,currentLevel,10,SSD1306_WHITE);
+    display.fillTriangle(triggerLevel, 30, triggerLevel-5, 25, triggerLevel+5, 25, SSD1306_WHITE);
+
+
     display.display();
 }
