@@ -2,13 +2,20 @@
 #include "InputDebounce.h"
 #include "BLECamera.h"
 
+
 #define DEBOUNCE_DELAY 20
 #define UP_BUTTON_PIN 7
+#ifdef NRF52832
 #define DOWN_BUTTON_PIN 15
 #define SELECT_SWITCH_PIN 11
 #define LIGHTNING_TRIGGER_PIN 16
 #define ANALOG_SENSOR PIN_A5
-
+#else
+#define DOWN_BUTTON_PIN 15
+#define SELECT_SWITCH_PIN 11
+#define LIGHTNING_TRIGGER_PIN 16
+#define ANALOG_SENSOR PIN_A5
+#endif
 
 
 

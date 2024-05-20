@@ -7,6 +7,9 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #undef CFG_DEBUG
+#define NRF58240
+#undef NRF52832
+
 
 
 
